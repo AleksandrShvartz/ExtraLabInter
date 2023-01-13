@@ -63,35 +63,13 @@ def find_all_plot(xs, wys, *, i_path: Path, detrend=False):
     plt.show()
 
 
-def lab3_ext(d_path: Path, w_path: Path, *, i_path: Path, tol=1.9 * 1e-4):
+def lab3_ext(d_path: Path, w_path: Path, *, i_path: Path, tol=1e-4):
     ys = load_data(d_path)
     xs = np.arange(len(ys))
-    # a, b, ws =load_weights(w_path)
-    max_weight = np.max(load_weights(w_path))
-    low, high = ys - tol * max_weight, ys + tol * max_weight
-
-    # pts = find_pts(xs, (low, high))
-    pts = [[7.98265896e-06, 2.35179375e-02], [1.63799716e-05, 2.20143629e-02], [7.54437870e-06, 2.22187311e-02],
-           [1.35555556e-05, 2.25538264e-02]]
-    *polys, = map(np.poly1d, pts)
-    pre_trend = np.zeros((len(polys), len(xs)))
-    for i, poly in enumerate(polys):
-        pre_trend[i] = poly(xs)
-    low_trend = np.min(pre_trend, axis=0)
-    high_trend = np.max(pre_trend, axis=0)
-
-    np.save('./low_trend', low_trend)
-    np.save('./high_trend', high_trend)
-
-
-
-    low_detrend = low - high_trend
-    high_detrend = high - low_trend
     weights = 5.40278e-06
-    low_detrend = ys - 1e-4 - xs*weights
-    high_detrend = ys + 1e-4 - xs*weights
-    plt.vlines(xs, low_detrend, high_detrend)
-    plt.show()
+    low_detrend = ys - tol - xs * weights
+    high_detrend = ys + tol - xs * weights
+
     plt.plot(xs, ys, label="orig")
     plt.legend()
     ttl = "original data"
@@ -102,7 +80,7 @@ def lab3_ext(d_path: Path, w_path: Path, *, i_path: Path, tol=1.9 * 1e-4):
     plt.show()
 
     find_all_plot(xs, (ys - tol, ys + tol), i_path=i_path)
-    find_all_plot(xs, (low_detrend, high_detrend), i_path=i_path, detrend=True)
+    # find_all_plot(xs, (low_detrend, high_detrend), i_path=i_path, detrend=True)
 
 
 def lab4_ext(predict_at, d_path: Path, w_path: Path, *, i_path: Path, tol=1.9 * 1e-4, trslice=slice(50, 150)):
